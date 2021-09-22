@@ -50,7 +50,7 @@ trait BlockControllerTrait
     {
         if (!$this->uniqID) {
             $prefix = strtolower($this->getRealIdentifier());
-            $this->uniqID = $prefix . '_' . Str::random(3);
+            $this->uniqID = $prefix . '_' . Str::quickRandom(3);
         }
 
         return $this->uniqID;

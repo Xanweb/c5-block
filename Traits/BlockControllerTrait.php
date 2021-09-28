@@ -44,6 +44,11 @@ trait BlockControllerTrait
     private $uniqID;
 
     /**
+     * @var string
+     */
+    private $locale;
+
+    /**
      * Get Uniq Identifier for Block.
      */
     public function getUniqueId(): string
@@ -105,11 +110,8 @@ trait BlockControllerTrait
     public function isInEditMode(): bool
     {
         $c = $this->getPageObject();
-        if ($c !== null) {
-            return $c->isEditMode();
-        }
 
-        return RequestPage::isEditMode();
+        return ($c !== null) ? $c->isEditMode() : RequestPage::isEditMode();
     }
 
     /**
@@ -169,16 +171,7 @@ trait BlockControllerTrait
      */
     public function getPageLanguage(): string
     {
-        static $language;
-
-        if (!$language && ($page = $this->getPageObject()) !== null) {
-            $section = Section::getBySectionOfSite($page);
-            if (is_object($section)) {
-                $language = $section->getLanguage();
-            }
-        }
-
-        return $language ?? RequestPage::getLanguage();
+        return \current(\explode('_', $this->getPageLocale()));
     }
 
     /**
@@ -188,16 +181,14 @@ trait BlockControllerTrait
      */
     public function getPageLocale(): string
     {
-        static $locale;
-
-        if (!$locale && ($page = $this->getPageObject()) !== null) {
+        if (!$this->locale && ($page = $this->getPageObject()) !== null) {
             $section = Section::getBySectionOfSite($page);
             if (is_object($section)) {
-                $locale = $section->getLocale();
+                $this->locale = $section->getLocale();
             }
         }
 
-        return $locale ?? RequestPage::getLocale();
+        return $this->locale ?? $this->locale = RequestPage::getLocale();
     }
 
     /**
@@ -212,11 +203,7 @@ trait BlockControllerTrait
                 $this->blockPage = $this->getCollectionObject() ?: null;
             } else {
                 $c = $this->request->getCurrentPage();
-                if ($c instanceof Page && !$c->isError()) {
-                    $this->blockPage = $c;
-                } else {
-                    $this->blockPage = $this->getCollectionObject() ?: null;
-                }
+                $this->blockPage = $c ?? ($this->getCollectionObject() ?: null);
             }
         }
 

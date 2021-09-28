@@ -71,7 +71,7 @@ abstract class ItemListBlockController extends CoreBlockController
             $this->items = Collection::make($qb->execute()->fetchAll());
 
             if ($isCacheEnabled) {
-                $cacheItem->setTTL($this->btCacheBlockOutputLifetime ?? (60 * 60 * 24 * 90)); // 3 months if no cache life time is defined
+                $cacheItem->setTTL($this->btCacheBlockOutputLifetime ?? (60 * 60 * 24 * 90)); // 3 months if no cache lifetime is defined
                 $cache->save($cacheItem->set($this->items));
             }
         }
@@ -84,7 +84,7 @@ abstract class ItemListBlockController extends CoreBlockController
      *
      * @param string $prop (optional) can be FIELD_TYPE, DEFAULT, NOTNULL, QUERY_PLACE_HOLDER,
      */
-    private function getItemListTableProps($prop = ''): array
+    private function getItemListTableProps(string $prop = ''): array
     {
         $cache = $this->cache();
         if (empty($this->itemListTableFields)) {
